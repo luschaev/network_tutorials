@@ -1,0 +1,59 @@
+no aaa root
+!
+transceiver qsfp default-mode 4x10G
+!
+service routing protocols model ribd
+!
+hostname Mgmt-DC-01
+!
+spanning-tree mode mstp
+!
+spanning-tree mst configuration
+   name MST
+   instance 1 vlan  10,30,70,100,110
+   instance 2 vlan  20,120,500,600
+   instance 3 vlan  50,52,54,56,81,83,85,87
+   instance 4 vlan  51,53,55,57,80,82,84,86
+!
+vlan 70,100,110,120,600
+!
+interface Port-Channel1
+   switchport mode trunk
+!
+interface Ethernet1
+   channel-group 1 mode active
+!
+interface Ethernet2
+   channel-group 1 mode active
+!
+interface Ethernet3
+   switchport access vlan 100
+   spanning-tree portfast
+!
+interface Ethernet4
+   switchport access vlan 110
+   spanning-tree portfast
+!
+interface Ethernet5
+   switchport access vlan 100
+   spanning-tree portfast
+!
+interface Ethernet6
+   spanning-tree portfast
+!
+interface Ethernet7
+   spanning-tree portfast
+!
+interface Ethernet8
+   spanning-tree portfast
+!
+interface Management1
+!
+interface Vlan600
+   ip address 10.6.10.5/28
+!
+no ip routing
+!
+ip route 0.0.0.0/0 10.6.10.14
+!
+end

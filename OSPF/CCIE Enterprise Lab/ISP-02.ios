@@ -1,0 +1,149 @@
+Current configuration : 3551 bytes
+!
+! Last configuration change at 15:24:35 UTC Tue Mar 11 2025
+!
+version 15.9
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname ISP-02
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+!
+!
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+interface Loopback10
+ description --- Test Loopback ---
+ ip address 4.4.4.4 255.255.255.255
+!
+interface GigabitEthernet0/0
+ ip address 12.12.12.1 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/1
+ ip address dhcp
+ ip nat outside
+ ip virtual-reassembly in
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/2
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/3
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+ media-type rj45
+!
+router bgp 65100
+ bgp log-neighbor-changes
+ neighbor 12.12.12.2 remote-as 65300
+ !
+ address-family ipv4
+  neighbor 12.12.12.2 activate
+  neighbor 12.12.12.2 default-originate
+  neighbor 12.12.12.2 route-map RM_AS65300 in
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+ip nat inside source list 100 interface GigabitEthernet0/1 overload
+!
+!
+ip prefix-list PL_AS65300 seq 10 permit 1.2.4.0/24
+ipv6 ioam timestamp
+!
+route-map RM_AS65300 permit 10
+ match ip address prefix-list PL_AS65300
+!
+!
+access-list 100 permit ip 1.2.4.0 0.0.0.255 any
+!
+control-plane
+!
+banner exec ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+banner incoming ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+banner login ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+!
+line con 0
+line aux 0
+line vty 0 4
+ login
+ transport input none
+!
+no scheduler allocate
+!
+end
+

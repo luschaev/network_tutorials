@@ -1,0 +1,158 @@
+Current configuration : 3872 bytes
+!
+version 15.9
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname Border-01
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+!
+!
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 1.2.4.254 255.255.255.255
+ ip ospf 1 area 0
+!
+interface GigabitEthernet0/0
+ ip address 10.1.0.50 255.255.255.254
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 10 md5 NSP
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/1
+ ip address 10.1.0.52 255.255.255.254
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 10 md5 NSP
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/2
+ ip address 11.11.11.2 255.255.255.252
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/3
+ no ip address
+ duplex auto
+ speed auto
+ media-type rj45
+!
+router ospf 1
+ router-id 1.2.4.254
+ redistribute bgp 65300 subnets
+ default-information originate metric 100
+ bfd all-interfaces
+!
+router bgp 65300
+ bgp log-neighbor-changes
+ neighbor 11.11.11.1 remote-as 65200
+ !
+ address-family ipv4
+  redistribute static route-map RM_AS65300
+  neighbor 11.11.11.1 activate
+  neighbor 11.11.11.1 prefix-list PL_DEFAULT in
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+ip route 1.2.4.0 255.255.255.0 Null0
+ip route 1.2.4.1 255.255.255.255 10.1.0.51
+ip route 1.2.4.1 255.255.255.255 10.1.0.53 200
+!
+!
+ip prefix-list PL_AS65300 seq 10 permit 1.2.4.0/24
+!
+ip prefix-list PL_DEFAULT seq 10 permit 0.0.0.0/0
+ipv6 ioam timestamp
+!
+route-map RM_AS65300 permit 10
+ match ip address prefix-list PL_AS65300
+!
+!
+!
+control-plane
+!
+banner exec ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+banner incoming ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+banner login ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+!
+line con 0
+line aux 0
+line vty 0 4
+ login
+ transport input none
+!
+no scheduler allocate
+!
+end
+

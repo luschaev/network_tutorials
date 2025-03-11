@@ -1,0 +1,152 @@
+Current configuration : 3666 bytes
+!
+! Last configuration change at 06:45:58 UTC Tue Mar 11 2025
+!
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+service compress-config
+!
+hostname Acc-SW-03
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+ip cef
+no ipv6 cef
+!
+!
+!
+spanning-tree mode mst
+spanning-tree extend system-id
+!
+spanning-tree mst configuration
+ name MST
+ instance 1 vlan 10, 30, 70, 100, 110
+ instance 2 vlan 20, 120, 500, 600
+ instance 3 vlan 42, 50, 52, 54, 56, 81, 83, 85, 87
+ instance 4 vlan 43, 51, 53, 55, 57, 80, 82, 84, 86
+!
+!
+vlan internal allocation policy ascending
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0
+ switchport trunk allowed vlan 10,20,30,500
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ media-type rj45
+ negotiation auto
+!
+interface GigabitEthernet0/1
+ switchport trunk allowed vlan 10,20,30,500
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ media-type rj45
+ negotiation auto
+!
+interface GigabitEthernet0/2
+ switchport access vlan 20
+ switchport mode access
+ media-type rj45
+ negotiation auto
+ spanning-tree portfast edge
+!
+interface GigabitEthernet0/3
+ switchport access vlan 30
+ switchport mode access
+ media-type rj45
+ negotiation auto
+ spanning-tree portfast edge
+!
+interface GigabitEthernet1/0
+ media-type rj45
+ negotiation auto
+!
+interface GigabitEthernet1/1
+ media-type rj45
+ negotiation auto
+!
+interface GigabitEthernet1/2
+ media-type rj45
+ negotiation auto
+!
+interface GigabitEthernet1/3
+ media-type rj45
+ negotiation auto
+!
+interface Vlan500
+ ip address 10.5.10.245 255.255.255.240
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+ip route 0.0.0.0 0.0.0.0 10.5.10.254
+!
+!
+!
+!
+!
+control-plane
+!
+banner exec ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+banner incoming ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+banner login ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+!
+line con 0
+line aux 0
+line vty 0 4
+!
+!
+end
+

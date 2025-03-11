@@ -1,0 +1,88 @@
+no aaa root
+!
+transceiver qsfp default-mode 4x10G
+!
+service routing protocols model ribd
+!
+hostname Acc-DC-03
+!
+spanning-tree mode mstp
+no spanning-tree vlan-id 4094
+!
+spanning-tree mst configuration
+   name MST
+   instance 1 vlan  10,30,70,100,110
+   instance 2 vlan  20,120,500,600
+   instance 3 vlan  50,52,54,56,81,83,85,87
+   instance 4 vlan  51,53,55,57,80,82,84,86
+!
+vlan 70,100,110,120,600
+!
+vlan 4094
+   trunk group MLAGPEER
+!
+interface Port-Channel1
+   description Peer-Link
+   switchport mode trunk
+   switchport trunk group MLAGPEER
+!
+interface Port-Channel5
+   description --- to Mgmt-DC-01 ---
+   switchport mode trunk
+   mlag 5
+!
+interface Port-Channel6
+   description --- to SRV-03 ---
+   switchport mode trunk
+   mlag 6
+!
+interface Port-Channel7
+   description --- to SRV-04 ---
+   switchport mode trunk
+   mlag 7
+!
+interface Ethernet1
+   switchport trunk allowed vlan 70,100,110,120,600
+   switchport mode trunk
+!
+interface Ethernet2
+   switchport trunk allowed vlan 70,100,110,120,600
+   switchport mode trunk
+!
+interface Ethernet3
+   channel-group 1 mode active
+!
+interface Ethernet4
+!
+interface Ethernet5
+   channel-group 5 mode active
+!
+interface Ethernet6
+   channel-group 6 mode active
+!
+interface Ethernet7
+   channel-group 7 mode active
+!
+interface Ethernet8
+   channel-group 1 mode active
+!
+interface Management1
+   shutdown
+!
+interface Vlan600
+   ip address 10.6.10.3/28
+!
+interface Vlan4094
+   ip address 10.255.255.2/31
+!
+no ip routing
+!
+mlag configuration
+   domain-id mlag2
+   local-interface Vlan4094
+   peer-address 10.255.255.3
+   peer-link Port-Channel1
+!
+ip route 0.0.0.0/0 10.6.10.14
+!
+end
