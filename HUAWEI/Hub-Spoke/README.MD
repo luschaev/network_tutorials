@@ -151,7 +151,7 @@
     M--ACTIVE   S--STANDBY   A--ALONE  NEG--NEGOTIATING
 </details>
 
-#### [Agg-SW01-HQ01 full config](configs/Agg-SW01-HQ01.ios)
+#### [Agg-SW01-HQ01 full config](configs/Agg-SW01-HQ01.md)
 
 ```
 <Agg-SW01-HQ01>display version
@@ -277,7 +277,7 @@ P/bndl -  Bundled
 S/susp  - Suspended
 ```
 
-#### [Border01-BR01 full config](configs/Border01-BR01.ios)
+#### [Border01-BR01 full config](configs/Border01-BR01.md)
 
 ```
 <Border01-BR01>display vers
@@ -404,7 +404,7 @@ IPSec SA information:
  M--ACTIVE   S--STANDBY   A--ALONE  NEG--NEGOTIATING
 ```
 
-#### [Agg-SW01-BR01 full config](configs/Agg-SW01-BR01.ios)
+#### [Agg-SW01-BR01 full config](configs/Agg-SW01-BR01.md)
 
 ```
 <Agg-SW01-BR01>display vers
@@ -479,7 +479,7 @@ Destination/Mask    Proto   Pre  Cost        Flags NextHop         Interface
   192.168.230.0/24  OSPF    10   1                 192.168.230.254 Vlanif230
 ```
 
-#### [Border01-BR02 full config](configs/Border01-BR02.ios)
+#### [Border01-BR02 full config](configs/Border01-BR02.md)
 
 ```
 <Border01-BR02>display vers
@@ -604,7 +604,7 @@ IPSec SA information:
 ------------------------------------------------------------------------------------------------------------------------------------
 ```
 
-#### [Agg-SW01-BR02 full config](configs/Agg-SW01-BR02.ios)
+#### [Agg-SW01-BR02 full config](configs/Agg-SW01-BR02.md)
 
 ```
 <Agg-SW01-BR02>display version
