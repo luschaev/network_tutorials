@@ -680,7 +680,7 @@ Destination/Mask    Proto   Pre  Cost        Flags NextHop         Interface
    192.168.10.0/24  ISIS-L1 15   0                 192.168.10.254  Vlanif10
    192.168.20.0/24  ISIS-L1 15   0                 192.168.20.254  Vlanif20
 ```
-
+#### [ISP-01 full config](configs/ISP-01.md)
 
 
 

@@ -1,4 +1,4 @@
-### Border01-BR02
+### Border01-BR01
 ```
 [V300R019C00SPC300]
 #
