@@ -58,8 +58,8 @@
   
 </details>
 
-**Для начала включаем глобально, прописываем для каких vlan это будет актуально.
-После этого все порты становятся не доверенными, это значит то что ни с одного из них не будут приниматься Offer. Настраиваем порт, который смотрит в сторону легитимного DHCP сервера, как trust. Это значиит, что только с этого порта будут приниматься DHCP OFFER.**
+Для начала включаем глобально, прописываем для каких vlan это будет актуально.
+После этого все порты становятся не доверенными, это значит то что ни с одного из них не будут приниматься Offer. Настраиваем порт, который смотрит в сторону легитимного DHCP сервера, как trust. Это значиит, что только с этого порта будут приниматься DHCP OFFER.
 
 #### DHCP Snooping Binding
 #### SW9
@@ -164,10 +164,10 @@
 
 
 
-**Для начала прописываем для каких vlan это будет актуально.
+Для начала прописываем для каких vlan это будет актуально.
 После включения все порты становятся не доверенными.
 DAI работает совместно с DHCP snooping, т.е. опирается на базу.
-И здесь три варианта, если есть порты, за которыми что-то настроено статикой, то можно статически добавить эту запись в базу DHCP Snooping и получить связанность между теми кто получил адрес по DHCP и у кого статика. Либо создать mac access list и прописать разрешенные маки. Либо просто сконфигурировать порт, за которым статика, как доверенный это менее секьюрно, но более удобно.**
+И здесь три варианта, если есть порты, за которыми что-то настроено статикой, то можно статически добавить эту запись в базу DHCP Snooping и получить связанность между теми кто получил адрес по DHCP и у кого статика. Либо создать mac access list и прописать разрешенные маки. Либо просто сконфигурировать порт, за которым статика, как доверенный это менее секьюрно, но более удобно.
 
 
 ```
@@ -177,7 +177,7 @@ SW10#ip dhcp snooping binding 5000.0004.0000 vlan 20 192.168.20.100 interface gi
 
 
 
-**Если следующим шагом планируется настрока IPSG, то лучше настроить порт как trust, потому что пр настройке IPSG нужно будет вносить эту связку MAC+IP+VLAN в базу IPSG и будет конфликт.**
+Если следующим шагом планируется настрока IPSG, то лучше настроить порт как trust, потому что пр настройке IPSG нужно будет вносить эту связку MAC+IP+VLAN в базу IPSG и будет конфликт.
 
 
 ### IP Source Guard
@@ -367,11 +367,79 @@ IPSG for static hosts allows IPSG to work without DHCP. IPSG for static hosts re
 
 IPSG for static hosts also supports dynamic hosts. If a dynamic host receives a DHCP-assigned IP address that is available in the IP DHCP snooping table, the same entry is learned by the IP device tracking table. In a stacked environment, when the master failover occurs, the IP source guard entries for static hosts attached to member ports are retained. When you enter the show ip device tracking all EXEC command, the IP device tracking table displays the entries as ACTIVE
 ```
-```
+
 Для начала нужно глобально включить ip device tracking, а после настроить параметры на интерфейсе, который смотрит в сторону статических хостов
-```
 
 
-```
+
 В приведенном примере, осуществляется проверка только IP, но можно сконфигурировать и проверку связки MAC+IP
+
+### Port-Security
+
+#### SW9
+
+<details>
+    <summary>sh run</summary>
+    
+    hostname SW9
+    !
+    interface GigabitEthernet1/1
+    description *** to Clients ***
+    switchport access vlan 10
+    switchport mode access
+    switchport port-security maximum 3
+    switchport port-security violation restrict
+    switchport port-security
+    negotiation auto
+    !
+    end
+  
+</details>
+
+
+Рекомендации по настройке Port-Security от  [CISCO](https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst2960l/software/15-2_7_e/configuration_guide/sec/b_1527e_security_2960l_cg/port_security.html)
+
+```
+Before you begin
+This task restricts input to an interface by limiting and identifying MAC addresses of the stations allowed to access the port:
+
+SUMMARY STEPS
+enable
+configure terminal
+port-security mac-address forbidden mac address
+interface interface-id
+switchport mode {access | trunk}
+switchport voice vlan vlan-id
+switchport port-security
+switchport port-security [maximum value [vlan {vlan-list | {access | voice}}]]
+switchport port-security violation {protect | restrict | shutdown | shutdown vlan}
+switchport port-security [mac-address mac-address [vlan {vlan-id | {access | voice}}]
+switchport port-security mac-address sticky
+switchport port-security mac-address sticky [mac-address | vlan {vlan-id | {access | voice}}]
+switchport port-security mac-address forbidden mac address
+end
+show port-security
+```
+
+На порту глобально включается port-security. Далее в зависимости от задачи настраиваем. В приведенном пример стоит ограничение на кол-во мак-адресов и при мх привышении остальные отбрасываются и падает сообщение в лог
+
+
+Работает на аксесс портах
+
+### Проверки
+
+Отключим на SW9 DAI и проверим связанность от клиентов до DHCP Server и статического хоста
+
+```bash
+*Jul 25 10:00:36.769: %SW_DAI-4-DHCP_SNOOPING_DENY: 1 Invalid ARPs (Req) on Gi0/3, vlan 10.([0050.7966.6805/192.168.10.4/ffff.ffff.ffff/192.168.10.100/10:00:36 UTC Fri Jul 25 2025])
+*Jul 25 10:00:37.769: %SW_DAI-4-DHCP_SNOOPING_DENY: 1 Invalid ARPs (Req) on Gi0/3, vlan 10.([0050.7966.6805/192.168.10.4/ffff.ffff.ffff/192.168.10.100/10:00:37 UTC Fri Jul 25 2025])
+*Jul 25 10:00:38.769: %SW_DAI-4-DHCP_SNOOPING_DENY: 1 Invalid ARPs (Req) on Gi0/3, vlan 10.([0050.7966.6805/192.168.10.4/ffff.ffff.ffff/192.168.10.100/10:00:38 UTC Fri Jul 25 2025])
+*Jul 25 10:00:48.769: %SW_DAI-4-DHCP_SNOOPING_DENY: 1 Invalid ARPs (Req) on Gi0/3, vlan 10.([0050.7966.6805/192.168.10.4/ffff.ffff.ffff/192.168.10.254/10:00:48 UTC Fri Jul 25 2025])
+*Jul 25 10:00:49.769: %SW_DAI-4-DHCP_SNOOPING_DENY: 1 Invalid ARPs (Req) on Gi0/3, vlan 10.([0050.7966.6805/192.168.10.4/ffff.ffff.ffff/192.168.10.254/10:00:49 UTC Fri Jul 25 2025])
+*Jul 25 10:00:50.769: %SW_DAI-4-DHCP_SNOOPING_DENY: 1 Invalid ARPs (Req) on Gi0/3, vlan 10.([0050.7966.6805/192.168.10.4/ffff.ffff.ffff/192.168.10.254/10:00:50 UTC Fri Jul 25 2025])
+```
+Привысим кол-во мак-адресов
+
+```
+*Jul 25 10:19:57.959: %PORT_SECURITY-2-PSECURE_VIOLATION: Security violation occurred, caused by MAC address 0050.7966.680c on port GigabitEthernet1/1.
 ```
